@@ -1,7 +1,7 @@
 package com.project.sb_ecommerce.service;
 
-import com.project.sb_ecommerce.DTOs.ProductDTO;
-import com.project.sb_ecommerce.DTOs.ProductResponse;
+import com.project.sb_ecommerce.DTOs.Requests.ProductDTO;
+import com.project.sb_ecommerce.DTOs.Responses.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

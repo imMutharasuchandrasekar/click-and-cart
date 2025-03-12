@@ -1,18 +1,22 @@
 package com.project.sb_ecommerce.controller;
 
-import com.project.sb_ecommerce.DTOs.LoginDTO;
-import com.project.sb_ecommerce.DTOs.LoginResponse;
-import com.project.sb_ecommerce.DTOs.MessageResponse;
-import com.project.sb_ecommerce.DTOs.SignupRequest;
+import com.project.sb_ecommerce.DTOs.Requests.LoginDTO;
+import com.project.sb_ecommerce.DTOs.Responses.LoginResponse;
+import com.project.sb_ecommerce.DTOs.Responses.MessageResponse;
+import com.project.sb_ecommerce.DTOs.Requests.SignupRequest;
+import com.project.sb_ecommerce.exceptions.APIException;
 import com.project.sb_ecommerce.model.Enums.AppRole;
 import com.project.sb_ecommerce.model.Role;
 import com.project.sb_ecommerce.model.User;
 import com.project.sb_ecommerce.repository.RoleRepository;
 import com.project.sb_ecommerce.repository.UserRepository;
 import com.project.sb_ecommerce.security.JWT.JwtUtils;
+import com.project.sb_ecommerce.security.Services.UserDetailsImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,10 +25,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -57,7 +58,7 @@ public class AuthController
             authentication = authenticationManager
                     .authenticate( new UsernamePasswordAuthenticationToken( loginRequest.getUsername(), loginRequest.getPassword() ) );
         }
-        catch (AuthenticationException exception)
+        catch ( AuthenticationException exception )
         {
             Map<String, Object> map = new HashMap<>();
             map.put("message", "Bad credentials");
@@ -67,16 +68,17 @@ public class AuthController
 
         SecurityContextHolder.getContext().setAuthentication( authentication );
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        UserDetailsImpl userDetails = ( UserDetailsImpl ) authentication.getPrincipal();
 
-        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie( userDetails );
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        LoginResponse response = new LoginResponse( userDetails.getUsername(), jwtToken, roles );
-        return ResponseEntity.ok( response );
+        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles);
+        return ResponseEntity.ok().header( HttpHeaders.SET_COOKIE, jwtCookie.toString() )
+                .body(response);
     }
 
     @PostMapping("/signup")
@@ -134,6 +136,28 @@ public class AuthController
         user.setRoles( roles );
         userRepository.save( user );
 
-        return ResponseEntity.ok( new MessageResponse( "User registered successfully!" ) );
+        return ResponseEntity.ok( new MessageResponse( "User registered successfully !" ) );
+    }
+
+    @GetMapping("/username")
+    public ResponseEntity<?> getcurrentAuthenticatedUserName( Authentication authentication )
+    {
+        if ( authentication != null )
+            return new ResponseEntity<>( authentication.getName(), HttpStatus.OK );
+        else
+            return new ResponseEntity<>( "No user is authenticated !", HttpStatus.NOT_FOUND );
+    }
+
+    @PostMapping("/signout")
+    public ResponseEntity<?> signOutUser(Authentication authentication)
+    {
+        if (authentication != null)
+        {
+            ResponseCookie cleanCookie = jwtUtils.getCleanCookie();
+            return ResponseEntity.ok().header( HttpHeaders.SET_COOKIE, cleanCookie.toString() )
+                    .body( "User logged out successfully !" );
+        }
+        else
+            return new ResponseEntity<>("No active session found !", HttpStatus.NOT_FOUND );
     }
 }

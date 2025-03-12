@@ -1,7 +1,7 @@
 package com.project.sb_ecommerce.service.impl;
 
-import com.project.sb_ecommerce.DTOs.ProductDTO;
-import com.project.sb_ecommerce.DTOs.ProductResponse;
+import com.project.sb_ecommerce.DTOs.Requests.ProductDTO;
+import com.project.sb_ecommerce.DTOs.Responses.ProductResponse;
 import com.project.sb_ecommerce.exceptions.ResourceNotFoundException;
 import com.project.sb_ecommerce.model.Category;
 import com.project.sb_ecommerce.model.Product;

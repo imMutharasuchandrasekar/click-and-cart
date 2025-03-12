@@ -1,7 +1,7 @@
 package com.project.sb_ecommerce.service.impl;
 
-import com.project.sb_ecommerce.DTOs.CategoryDTO;
-import com.project.sb_ecommerce.DTOs.CategoryResponse;
+import com.project.sb_ecommerce.DTOs.Requests.CategoryDTO;
+import com.project.sb_ecommerce.DTOs.Responses.CategoryResponse;
 import com.project.sb_ecommerce.exceptions.APIException;
 import com.project.sb_ecommerce.exceptions.ResourceNotFoundException;
 import com.project.sb_ecommerce.model.Category;

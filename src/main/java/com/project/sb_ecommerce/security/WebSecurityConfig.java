@@ -1,5 +1,10 @@
 package com.project.sb_ecommerce.security;
 
+import com.project.sb_ecommerce.model.Enums.AppRole;
+import com.project.sb_ecommerce.model.Role;
+import com.project.sb_ecommerce.model.User;
+import com.project.sb_ecommerce.repository.RoleRepository;
+import com.project.sb_ecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +29,7 @@ import com.project.sb_ecommerce.security.JWT.AuthTokenFilter;
 import com.project.sb_ecommerce.security.Services.UserDetailsServiceImpl;
 
 import java.util.Set;
+
 
 @Configuration
 @EnableWebSecurity
@@ -71,8 +77,8 @@ public class WebSecurityConfig {
                         auth.requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/h2-console/**").permitAll()
-                                .requestMatchers("/api/admin/**").permitAll()
-                                .requestMatchers("/api/public/**").permitAll()
+                               // .requestMatchers("/api/admin/**").permitAll()
+                               // .requestMatchers("/api/public/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/api/test/**").permitAll()
                                 .requestMatchers("/images/**").permitAll()

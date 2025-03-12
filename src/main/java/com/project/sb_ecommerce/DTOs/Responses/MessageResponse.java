@@ -1,16 +1,13 @@
-package com.project.sb_ecommerce.DTOs;
+package com.project.sb_ecommerce.DTOs.Responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class LoginDTO
+public class MessageResponse
 {
-    private String username;
-
-    private String password;
+    private String message;
 }
-

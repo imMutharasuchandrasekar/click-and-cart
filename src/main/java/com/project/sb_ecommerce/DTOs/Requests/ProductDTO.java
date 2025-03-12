@@ -1,9 +1,5 @@
-package com.project.sb_ecommerce.DTOs;
+package com.project.sb_ecommerce.DTOs.Requests;
 
-import com.project.sb_ecommerce.model.Category;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

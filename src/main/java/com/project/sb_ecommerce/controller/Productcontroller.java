@@ -1,7 +1,7 @@
 package com.project.sb_ecommerce.controller;
 
-import com.project.sb_ecommerce.DTOs.ProductDTO;
-import com.project.sb_ecommerce.DTOs.ProductResponse;
+import com.project.sb_ecommerce.DTOs.Requests.ProductDTO;
+import com.project.sb_ecommerce.DTOs.Responses.ProductResponse;
 import com.project.sb_ecommerce.service.Productservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
