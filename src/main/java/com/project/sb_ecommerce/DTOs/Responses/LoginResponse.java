@@ -14,6 +14,6 @@ public class LoginResponse
 
     private List<String> roles;
 
-    // As cookie based auth. is implemented removing the token from response.
-    //  private String jwtToken;
+    // As cookie based auth. is implemented, I can actually stop sending this in response.
+    private String jwtToken;
 }

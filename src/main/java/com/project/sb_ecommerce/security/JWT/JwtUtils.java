@@ -41,7 +41,6 @@ public class JwtUtils
             return cookie.getValue();
         }
         return null;
-
     }
 
     protected String getJwtFromHeader( HttpServletRequest request )
@@ -60,7 +59,7 @@ public class JwtUtils
         String jwtToken = generateTokenFromUsername( userPrincipal.getUsername() );
         ResponseCookie cookie = ResponseCookie.from( jwtCookie, jwtToken )
                 .path("/api")
-                .maxAge(2 * 60 * 60)
+                .maxAge(24 * 60 * 60)
                 .httpOnly(false)
                 .secure(false)
                 .build();

@@ -42,16 +42,18 @@ public class WebSecurityConfig {
     private AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
+    public AuthTokenFilter authenticationJwtTokenFilter()
+    {
         return new AuthTokenFilter();
     }
 
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
+    public DaoAuthenticationProvider authenticationProvider()
+    {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
-        authProvider.setUserDetailsService(userDetailsServiceImpl);
+        authProvider.setUserDetailsService( userDetailsServiceImpl );
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;
@@ -59,20 +61,23 @@ public class WebSecurityConfig {
 
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+    public AuthenticationManager authenticationManager( AuthenticationConfiguration authConfig ) throws Exception
+    {
         return authConfig.getAuthenticationManager();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder()
+    {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
+    {
         http.csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint( unauthorizedHandler ) )
+                .sessionManagement( session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) )
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
@@ -85,11 +90,11 @@ public class WebSecurityConfig {
                                 .anyRequest().authenticated()
                 );
 
-        http.authenticationProvider(authenticationProvider());
+        http.authenticationProvider( authenticationProvider() );
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore( authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class );
         http.headers(headers -> headers.frameOptions(
-                frameOptions -> frameOptions.sameOrigin()));
+                frameOptions -> frameOptions.sameOrigin() ) );
 
         return http.build();
     }

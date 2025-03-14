@@ -19,6 +19,8 @@ public class Cart
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartId;
 
+    private Double totalPrice = 0.0;
+
     // Bi-direction and owner of this relation.
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -29,7 +31,11 @@ public class Cart
             orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
 
-    private Double totalPrice = 0.0;
+    public Cart( User user, Double totalPrice)
+    {
+        this.user = user;
+        this.totalPrice = totalPrice;
+    }
 }
 
 

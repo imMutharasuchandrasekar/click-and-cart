@@ -29,5 +29,13 @@ public class CartItem
     private Integer quantity;
 
     private double productPrice;
+
+    public CartItem(Cart cartobj, Product prod, Integer quantity, double productPrice )
+    {
+        cart = cartobj;
+        product = prod;
+        this.quantity = quantity;
+        this.productPrice = productPrice;
+    }
 }
 
