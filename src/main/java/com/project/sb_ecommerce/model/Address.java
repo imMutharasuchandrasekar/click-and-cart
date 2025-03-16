@@ -8,15 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Table(name = "addresses")
-public class Address {
-
+public class Address
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
@@ -26,7 +24,7 @@ public class Address {
     private String building;
 
     @NotBlank
-    private String Street;
+    private String street;
 
     @NotBlank
     @Size(min = 2, message = "City name should be atleast two letters")
@@ -44,15 +42,17 @@ public class Address {
     @Size(min = 3,  message = "Pincode should have atleast 3 digits")
     private String pincode;
 
-    public Address(String city, String building, String street, String state, String country, String pincode) {
-        this.city = city;
+    public Address( String building, String street, String city, String state, String country, String pincode )
+    {
         this.building = building;
-        Street = street;
+        this.street = street;
+        this.city = city;
         this.state = state;
         this.country = country;
         this.pincode = pincode;
     }
 
-    @ManyToMany(mappedBy = "addresses")
-    private List<User> users;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

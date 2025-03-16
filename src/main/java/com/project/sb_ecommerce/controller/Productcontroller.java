@@ -13,8 +13,8 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
-public class Productcontroller {
-
+public class Productcontroller
+{
     @Autowired
     Productservice productservice;
 
@@ -48,11 +48,29 @@ public class Productcontroller {
         return new ResponseEntity<>( response, HttpStatus.FOUND );
     }
 
-    @GetMapping("/products/{productId}/image")
+    @PutMapping("admin/products/{productId}")
+    public ResponseEntity<ProductResponse> updateProduct( @RequestBody ProductDTO dto, @PathVariable Long productId )
+    {
+        ProductResponse response = productservice.updateProduct( productId, dto );
+        return new ResponseEntity<>( response, HttpStatus.OK );
+    }
+
+    @PutMapping("/products/{productId}/image")
     public ResponseEntity<ProductDTO> updateProductImage( @PathVariable Long productId,
                                                                @RequestParam(name="image") MultipartFile image ) throws IOException
     {
         ProductDTO updatedProduct = productservice.updateProductImage( productId, image );
         return new ResponseEntity<>( updatedProduct, HttpStatus.OK );
+    }
+
+    @DeleteMapping("/admin/products/{productId}")
+    public ResponseEntity<String> deleteProduct( @PathVariable Long productId )
+    {
+        try{
+            String response = productservice.deleteProduct( productId );
+            return new ResponseEntity<>( response, HttpStatus.OK );
+        } catch ( Exception e ) {
+            return new ResponseEntity<>( e.getMessage(), HttpStatus.BAD_GATEWAY );
+        }
     }
 }

@@ -18,4 +18,8 @@ public interface Productservice {
     ProductResponse searchByKeyword(String keyword);
 
     ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException;
+
+    String deleteProduct( Long productId );
+
+    ProductResponse updateProduct(Long productId, ProductDTO dto);
 }

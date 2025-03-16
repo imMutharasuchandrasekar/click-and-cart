@@ -109,7 +109,6 @@ public class WebSecurityConfig {
                 "/swagger-ui.html",
                 "/webjars/**"));
     }
-
 /*
     @Bean
     public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -172,5 +171,5 @@ public class WebSecurityConfig {
             });
         };
     }
- */
+*/
 }

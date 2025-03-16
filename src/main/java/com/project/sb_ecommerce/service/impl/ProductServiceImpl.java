@@ -1,10 +1,13 @@
 package com.project.sb_ecommerce.service.impl;
 
+import com.project.sb_ecommerce.DTOs.Requests.CartDTO;
 import com.project.sb_ecommerce.DTOs.Requests.ProductDTO;
 import com.project.sb_ecommerce.DTOs.Responses.ProductResponse;
 import com.project.sb_ecommerce.exceptions.ResourceNotFoundException;
+import com.project.sb_ecommerce.model.Cart;
 import com.project.sb_ecommerce.model.Category;
 import com.project.sb_ecommerce.model.Product;
+import com.project.sb_ecommerce.repository.CartRepository;
 import com.project.sb_ecommerce.repository.CategoryRepository;
 import com.project.sb_ecommerce.repository.ProductRepository;
 import com.project.sb_ecommerce.service.Productservice;
@@ -19,15 +22,19 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
-public class ProductServiceImpl implements Productservice {
-
+public class ProductServiceImpl implements Productservice
+{
     @Autowired
     ProductRepository productRepository;
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    CartRepository cartRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -89,7 +96,28 @@ public class ProductServiceImpl implements Productservice {
     }
 
     @Override
-    public ProductDTO updateProductImage( Long productId, MultipartFile image ) throws IOException {
+    public ProductResponse updateProduct( Long productId, ProductDTO productDTO )
+    {
+        Product productFromDb = productRepository.findById( productId )
+                .orElseThrow( () -> new ResourceNotFoundException( "Product", "product id", productId ) );
+
+        Product product = modelMapper.map( productDTO, Product.class);
+
+        productFromDb.setProductName( product.getProductName() );
+        productFromDb.setDescription( product.getDescription() );
+        productFromDb.setQuantity( product.getQuantity() );
+        productFromDb.setDiscount( product.getDiscount() );
+        productFromDb.setPrice( product.getPrice() );
+        productFromDb.setSpecialPrice( product.getSpecialPrice() );
+
+        Product savedProduct = productRepository.save( productFromDb );
+        return modelMapper.map( savedProduct, ProductResponse.class );
+    }
+
+
+    @Override
+    public ProductDTO updateProductImage( Long productId, MultipartFile image ) throws IOException
+    {
         Product savedProduct = productRepository.findById( productId )
                 .orElseThrow( () -> new ResourceNotFoundException( "Product", "product id", productId ) );
 
@@ -119,5 +147,16 @@ public class ProductServiceImpl implements Productservice {
         Files.copy( file.getInputStream(), Paths.get(filePath) );
 
         return uniqueFileName;
+    }
+
+    @Override
+    public String deleteProduct( Long productId )
+    {
+        try{
+            productRepository.deleteById( productId );
+        } catch (RuntimeException e) {
+            throw new RuntimeException( "Product could not be deleted" );
+        }
+        return "Product deleted successfully !";
     }
 }

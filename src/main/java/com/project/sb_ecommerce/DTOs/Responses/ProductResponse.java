@@ -12,6 +12,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductResponse {
-
     List<ProductDTO> contents = new ArrayList<>();
 }
