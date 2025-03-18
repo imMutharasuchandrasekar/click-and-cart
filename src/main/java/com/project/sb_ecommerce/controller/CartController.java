@@ -1,6 +1,8 @@
 package com.project.sb_ecommerce.controller;
 
 import com.project.sb_ecommerce.DTOs.Requests.CartDTO;
+import com.project.sb_ecommerce.DTOs.Responses.CartResponse;
+import com.project.sb_ecommerce.configurations.Appconstants;
 import com.project.sb_ecommerce.exceptions.APIException;
 import com.project.sb_ecommerce.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +37,14 @@ public class CartController
     }
 
     @GetMapping
-    public ResponseEntity<List<CartDTO>> getAllCarts()
+    public ResponseEntity<CartResponse> getAllCarts(
+            @RequestParam(name = "offset", defaultValue = Appconstants.OFFSET, required = false) Integer offset,
+            @RequestParam(name = "limit", defaultValue = Appconstants.LIMIT, required = false) Integer limit,
+            @RequestParam(name = "sortBy", defaultValue = "cartId", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = Appconstants.DEFAULT_SORT_ORDER, required = false) String sortOrder )
     {
-       List<CartDTO> cartDTOList = cartService.getAllCarts();
-       return new ResponseEntity<>( cartDTOList, HttpStatus.OK );
+        CartResponse cartResponse = cartService.getAllCarts( offset, limit, sortBy, sortOrder );
+        return new ResponseEntity<>( cartResponse, HttpStatus.OK );
     }
 
     @GetMapping("user/cart")

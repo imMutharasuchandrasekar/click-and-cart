@@ -1,6 +1,7 @@
 package com.project.sb_ecommerce.service;
 
 import com.project.sb_ecommerce.DTOs.Requests.ProductDTO;
+import com.project.sb_ecommerce.DTOs.Responses.PaginatedProductResponse;
 import com.project.sb_ecommerce.DTOs.Responses.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,11 +12,11 @@ import java.io.IOException;
 public interface Productservice {
     ProductDTO addProduct( ProductDTO productDTO, long categoryId );
 
-    ProductResponse getAllProducts();
+    PaginatedProductResponse getAllProducts( Integer offset, Integer limit, String sortBy, String sortOrder );
 
-    ProductResponse getProudctsByCategory(Long categoryId);
+    PaginatedProductResponse getProductsByCategory( Long categoryId, Integer offset, Integer limit, String sortBy, String sortOrder );
 
-    ProductResponse searchByKeyword(String keyword);
+    PaginatedProductResponse searchByKeyword( String keyword, Integer offset, Integer limit, String sortBy, String sortOrder );
 
     ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException;
 

@@ -2,6 +2,7 @@ package com.project.sb_ecommerce.service.impl;
 
 import com.project.sb_ecommerce.DTOs.Requests.CartDTO;
 import com.project.sb_ecommerce.DTOs.Requests.ProductDTO;
+import com.project.sb_ecommerce.DTOs.Responses.CartResponse;
 import com.project.sb_ecommerce.Utilities.AuthUtil;
 import com.project.sb_ecommerce.exceptions.APIException;
 import com.project.sb_ecommerce.exceptions.ResourceNotFoundException;
@@ -15,10 +16,13 @@ import com.project.sb_ecommerce.service.CartService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -88,22 +92,30 @@ public class CartServiceImpl implements CartService
     }
 
     @Override
-    public List<CartDTO> getAllCarts()
+    public CartResponse getAllCarts(Integer offset, Integer limit, String sortBy, String sortOrder )
     {
-        List<Cart> carts = cartRepository.findAll();
-        if ( carts.size() == 0 )
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase( "asc" )
+                ? Sort.by( sortBy ).ascending() : Sort.by( sortBy ).descending();
+
+        Pageable pagedRequest = PageRequest.of( offset, limit, sortByAndOrder );
+        Page<Cart> cartsResultSet = cartRepository.findAll( pagedRequest );
+        List<Cart> allCarts = cartsResultSet.getContent();
+        if ( allCarts.size() == 0 )
         {
             throw new APIException( "No cart exists" );
         }
 
-        List<CartDTO> cartDTOs = carts.stream().map(cart -> {
+        List<CartDTO> cartDTOs = allCarts.stream().map(cart -> {
             CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
             List<ProductDTO> products = constructProductDTOListFromCartItems( cart );
             cartDTO.setProducts( products );
             return cartDTO;
         }).toList();
 
-        return cartDTOs;
+        CartResponse cartResponse = new CartResponse(
+                cartDTOs, cartsResultSet.getSize(), cartsResultSet.getNumber(), cartsResultSet.getTotalElements(),
+                cartsResultSet.getTotalPages(), cartsResultSet.isLast()  );
+        return cartResponse;
     }
 
     @Override

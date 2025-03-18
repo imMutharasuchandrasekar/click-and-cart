@@ -1,10 +1,9 @@
 package com.project.sb_ecommerce.service.impl;
 
-import com.project.sb_ecommerce.DTOs.Requests.CartDTO;
 import com.project.sb_ecommerce.DTOs.Requests.ProductDTO;
+import com.project.sb_ecommerce.DTOs.Responses.PaginatedProductResponse;
 import com.project.sb_ecommerce.DTOs.Responses.ProductResponse;
 import com.project.sb_ecommerce.exceptions.ResourceNotFoundException;
-import com.project.sb_ecommerce.model.Cart;
 import com.project.sb_ecommerce.model.Category;
 import com.project.sb_ecommerce.model.Product;
 import com.project.sb_ecommerce.repository.CartRepository;
@@ -13,6 +12,10 @@ import com.project.sb_ecommerce.repository.ProductRepository;
 import com.project.sb_ecommerce.service.Productservice;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements Productservice
@@ -56,43 +58,57 @@ public class ProductServiceImpl implements Productservice
     }
 
     @Override
-    public ProductResponse getAllProducts()
+    public PaginatedProductResponse getAllProducts( Integer offset, Integer limit, String sortBy, String sortOrder )
     {
-        List<Product> productList = productRepository.findAll();
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase( "asc" )
+                ? Sort.by( sortBy ).ascending() : Sort.by( sortBy ).descending();
+        Pageable pagedRequest = PageRequest.of( offset, limit, sortByAndOrder );
+        Page<Product> pagedProductList = productRepository.findAll( pagedRequest );
 
-        List<ProductDTO> productDTOList = productList.stream()
+        List<ProductDTO> productDTOList = pagedProductList.getContent().stream()
                 .map( product -> modelMapper.map( product, ProductDTO.class ) ).toList();
 
-        ProductResponse responseObj = new ProductResponse();
-        responseObj.setContents( productDTOList );
-        return responseObj;
+        PaginatedProductResponse paginatedProductResponse = new PaginatedProductResponse( productDTOList,
+                pagedProductList.getSize(), pagedProductList.getNumber(), pagedProductList.getTotalElements(),
+                pagedProductList.getTotalPages(), pagedProductList.isLast() );
+        return paginatedProductResponse;
     }
 
     @Override
-    public ProductResponse getProudctsByCategory( Long categoryId )
+    public PaginatedProductResponse getProductsByCategory(Long categoryId, Integer offset, Integer limit, String sortBy, String sortOrder )
     {
         Category category = categoryRepository.findById( categoryId )
                 .orElseThrow( () -> new ResourceNotFoundException( "Category", "category id", categoryId ) );
-        List<Product> productList = productRepository.findByProductCategoryOrderByPriceAsc( category );
 
-        List<ProductDTO> productDTOList = productList.stream()
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase( "asc" )
+                ? Sort.by( sortBy ).ascending() : Sort.by( sortBy ).descending();
+        Pageable pagedRequest = PageRequest.of( offset, limit, sortByAndOrder );
+        Page<Product> pagedProductList = productRepository.findByProductCategory( category, pagedRequest );
+
+        List<ProductDTO> productDTOList = pagedProductList.getContent().stream()
                 .map( product -> modelMapper.map( product, ProductDTO.class ) ).toList();
 
-        ProductResponse responseObj = new ProductResponse();
-        responseObj.setContents( productDTOList );
-        return responseObj;
+        PaginatedProductResponse paginatedProductResponse = new PaginatedProductResponse( productDTOList,
+                pagedProductList.getSize(), pagedProductList.getNumber(), pagedProductList.getTotalElements(),
+                pagedProductList.getTotalPages(), pagedProductList.isLast() );
+        return paginatedProductResponse;
     }
 
     @Override
-    public ProductResponse searchByKeyword( String keyword )
+    public PaginatedProductResponse searchByKeyword( String keyword, Integer offset, Integer limit, String sortBy, String sortOrder )
     {
-        List<Product> productList = productRepository.findByProductNameLikeIgnoreCase( "%" + keyword + "%" );
-        List<ProductDTO> productDTOList = productList.stream()
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase( "asc" )
+                ? Sort.by( sortBy ).ascending() : Sort.by( sortBy ).descending();
+        Pageable pagedRequest = PageRequest.of( offset, limit, sortByAndOrder );
+
+        Page<Product> pagedProductList = productRepository.findByProductNameLikeIgnoreCase( "%" + keyword + "%", pagedRequest );
+        List<ProductDTO> productDTOList = pagedProductList.getContent().stream()
                 .map( product -> modelMapper.map( product, ProductDTO.class ) ).toList();
 
-        ProductResponse responseObj = new ProductResponse();
-        responseObj.setContents( productDTOList );
-        return responseObj;
+        PaginatedProductResponse paginatedProductResponse = new PaginatedProductResponse( productDTOList,
+                pagedProductList.getSize(), pagedProductList.getNumber(), pagedProductList.getTotalElements(),
+                pagedProductList.getTotalPages(), pagedProductList.isLast() );
+        return paginatedProductResponse;
     }
 
     @Override

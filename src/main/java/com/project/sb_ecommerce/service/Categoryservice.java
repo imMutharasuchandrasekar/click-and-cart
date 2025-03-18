@@ -6,7 +6,7 @@ import com.project.sb_ecommerce.model.Category;
 
 public interface Categoryservice {
 
-    CategoryDTO addCategory(CategoryDTO categorydto);
+    CategoryDTO addCategory( CategoryDTO categorydto );
 
     CategoryResponse getAllCategories( Integer offset, Integer limit, String sortBy, String sortOrder );
 

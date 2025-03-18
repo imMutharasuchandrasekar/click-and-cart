@@ -1,20 +1,18 @@
 package com.project.sb_ecommerce.DTOs.Responses;
 
-import com.project.sb_ecommerce.DTOs.Requests.CategoryDTO;
+// DTO representation of Response object of Category entity. Facilitates paginated results.
+
+import com.project.sb_ecommerce.DTOs.Requests.CartDTO;
 import lombok.*;
 
 import java.util.List;
 
-// DTO representation of Response object of Category entity. Meant to be passed as response.
-
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Data
-public class CategoryResponse
+public class CartResponse
 {
-    private List<CategoryDTO> content;
+    private List<CartDTO> content;
     private Integer limit;
     private Integer offset;
     private Long totalElements;

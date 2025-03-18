@@ -55,7 +55,6 @@ public class CategoryserviceImpl implements Categoryservice {
                 .map( category -> modelMapper.map( category, CategoryDTO.class) ).toList();
         CategoryResponse categoryResponse = new CategoryResponse();
         categoryResponse.setContent( categoryDTOList );
-
         categoryResponse.setOffset( categoryPage.getNumber() );
         categoryResponse.setLimit( categoryPage.getSize() );
         categoryResponse.setTotalElements( categoryPage.getTotalElements() );

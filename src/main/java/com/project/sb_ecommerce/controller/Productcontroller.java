@@ -1,7 +1,9 @@
 package com.project.sb_ecommerce.controller;
 
 import com.project.sb_ecommerce.DTOs.Requests.ProductDTO;
+import com.project.sb_ecommerce.DTOs.Responses.PaginatedProductResponse;
 import com.project.sb_ecommerce.DTOs.Responses.ProductResponse;
+import com.project.sb_ecommerce.configurations.Appconstants;
 import com.project.sb_ecommerce.service.Productservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,23 +30,37 @@ public class Productcontroller
     }
 
     @GetMapping("public/products")
-    public ResponseEntity<ProductResponse> getAllProducts()
+    public ResponseEntity<PaginatedProductResponse> getAllProducts(
+            @RequestParam(name = "offset", defaultValue = Appconstants.OFFSET, required = false) Integer offset,
+            @RequestParam(name = "limit", defaultValue = Appconstants.LIMIT, required = false) Integer limit,
+            @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = Appconstants.DEFAULT_SORT_ORDER, required = false) String sortOrder )
     {
-        ProductResponse response = productservice.getAllProducts();
+        PaginatedProductResponse response = productservice.getAllProducts( offset, limit, sortBy, sortOrder );
         return new ResponseEntity<>( response, HttpStatus.OK );
     }
 
     @RequestMapping( value= "public/categories/{categoryId}/products", method = RequestMethod.GET )
-    public ResponseEntity<ProductResponse> getProductByCategory( @PathVariable Long categoryId )
+    public ResponseEntity<PaginatedProductResponse> getProductByCategory(
+            @PathVariable Long categoryId,
+            @RequestParam(name = "offset", defaultValue = Appconstants.OFFSET, required = false) Integer offset,
+            @RequestParam(name = "limit", defaultValue = Appconstants.LIMIT, required = false) Integer limit,
+            @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = Appconstants.DEFAULT_SORT_ORDER, required = false) String sortOrder )
     {
-        ProductResponse response = productservice.getProudctsByCategory( categoryId );
+        PaginatedProductResponse response = productservice.getProductsByCategory( categoryId, offset, limit, sortBy, sortOrder );
         return new ResponseEntity<>( response, HttpStatus.OK );
     }
 
     @RequestMapping( value = "public/products/keyword/{keyword}", method = RequestMethod.GET )
-    public ResponseEntity<ProductResponse> getProductByKeyword( @PathVariable String keyword )
+    public ResponseEntity<PaginatedProductResponse> getProductByKeyword(
+            @PathVariable String keyword,
+            @RequestParam(name = "offset", defaultValue = Appconstants.OFFSET, required = false) Integer offset,
+            @RequestParam(name = "limit", defaultValue = Appconstants.LIMIT, required = false) Integer limit,
+            @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = Appconstants.DEFAULT_SORT_ORDER, required = false) String sortOrder )
     {
-        ProductResponse response = productservice.searchByKeyword( keyword );
+        PaginatedProductResponse response = productservice.searchByKeyword( keyword, offset, limit, sortBy, sortOrder );
         return new ResponseEntity<>( response, HttpStatus.FOUND );
     }
 
