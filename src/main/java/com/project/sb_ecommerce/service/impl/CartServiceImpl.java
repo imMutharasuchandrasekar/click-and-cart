@@ -80,9 +80,6 @@ public class CartServiceImpl implements CartService
         cart.setTotalPrice( cart.getTotalPrice() + ( productInDb.getSpecialPrice() * quantity ) );
         cartRepository.save( cart );
 
-        productInDb.setQuantity( productInDb.getQuantity() );
-        productRepository.save( productInDb );
-
         CartDTO cartDTO = modelMapper.map( cart, CartDTO.class );
         List<ProductDTO> productDTOList = constructProductDTOListFromCartItems( cart );
         cartDTO.setProducts( productDTOList );
@@ -104,7 +101,7 @@ public class CartServiceImpl implements CartService
             List<ProductDTO> products = constructProductDTOListFromCartItems( cart );
             cartDTO.setProducts( products );
             return cartDTO;
-        }).collect(Collectors.toList());
+        }).toList();
 
         return cartDTOs;
     }
@@ -144,7 +141,6 @@ public class CartServiceImpl implements CartService
             {
                 savedCartItem.setQuantity( savedCartItem.getQuantity() + 1 );
                 userCart.setTotalPrice( userCart.getTotalPrice() + productInDb.getSpecialPrice() );
-                productInDb.setQuantity( productInDb.getQuantity() - 1 );
             }
             else
             {
@@ -157,13 +153,11 @@ public class CartServiceImpl implements CartService
             {
                 savedCartItem.setQuantity( savedCartItem.getQuantity() - 1 );
                 userCart.setTotalPrice( userCart.getTotalPrice() - productInDb.getSpecialPrice() );
-                productInDb.setQuantity( productInDb.getQuantity() + 1 );
             }
             else
                 throw new APIException( "Are you sure you want to remove the product from the cart ?" );
         }
 
-        productRepository.save( productInDb );
         cartItemRepository.save( savedCartItem );
         Cart updatedCart = cartRepository.save( userCart );
 
@@ -208,8 +202,8 @@ public class CartServiceImpl implements CartService
         List<CartItem> cartItems = cart.getCartItems();
 
         Stream<ProductDTO> productStream = cartItems.stream().map(item -> {
-            ProductDTO map = modelMapper.map(item.getProduct(), ProductDTO.class);
-            map.setQuantity(item.getQuantity());
+            ProductDTO map = modelMapper.map( item.getProduct(), ProductDTO.class );
+            map.setQuantity( item.getQuantity() );
             return map;
         });
         return  productStream.toList();

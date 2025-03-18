@@ -38,7 +38,7 @@ public class CartController
     public ResponseEntity<List<CartDTO>> getAllCarts()
     {
        List<CartDTO> cartDTOList = cartService.getAllCarts();
-       return new ResponseEntity<>( cartDTOList, HttpStatus.FOUND );
+       return new ResponseEntity<>( cartDTOList, HttpStatus.OK );
     }
 
     @GetMapping("user/cart")
@@ -47,7 +47,7 @@ public class CartController
         try
         {
             CartDTO userCartDTO = cartService.getLoggedInUserCart();
-            return new ResponseEntity<>( userCartDTO, HttpStatus.FOUND );
+            return new ResponseEntity<>( userCartDTO, HttpStatus.OK );
         }
         catch ( APIException apiException )
         {
