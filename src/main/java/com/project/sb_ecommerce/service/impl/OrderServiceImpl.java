@@ -11,9 +11,14 @@ import com.project.sb_ecommerce.model.Enums.PaymentStatus;
 import com.project.sb_ecommerce.repository.*;
 import com.project.sb_ecommerce.service.CartService;
 import com.project.sb_ecommerce.service.OrderService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -46,13 +51,18 @@ public class OrderServiceImpl implements OrderService
     @Autowired
     ModelMapper modelMapper;
 
+    @Autowired
+    private JavaMailSender javaMailSender;
+
+    @Value("${spring.mail.username}")
+    private String _fromMailAddress;
 
     @Transactional
     @Override
     public OrderDTO placeOrder( String userEmail, Long addressId,
                                PaymentMethod paymentMethod, String paymentGatewayName,
                                String paymentTransactionId, PaymentStatus paymentGatewayStatus,
-                               String paymentGatewayResponseMessage ) throws ResourceNotFoundException, APIException
+                               String paymentGatewayResponseMessage ) throws ResourceNotFoundException, APIException, MessagingException
     {
         Cart userCart = cartRepository.findCartByEmail( userEmail );
         if ( userCart == null )
@@ -105,12 +115,31 @@ public class OrderServiceImpl implements OrderService
         cartItemsToRemove.forEach(item ->
                 cartService.deleteProductFromCart( userCart.getCartId(), item.getProduct().getProductId() ) );
 
+        sendMail( userEmail, savedOrder );
+
         OrderDTO orderDTO = modelMapper.map( savedOrder, OrderDTO.class );
         orderItems.forEach( item -> orderDTO.getOrderItems()
                 .add( modelMapper.map( item, OrderItemDTO.class ) ) );
 
         orderDTO.setAddressId( addressId );
         return orderDTO;
+    }
+
+
+    public void sendMail( String userEmail, Order savedOrder ) throws MessagingException
+    {
+        String mailSubject = " Your Payment for the Order has been successful and the order id is placed with an " +
+                "order Id of - " + savedOrder.getOrderId() + ". You can track you Order from the order section."
+                + " Happy Shopping !";
+
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setFrom( _fromMailAddress );
+        helper.setTo( userEmail );
+        helper.setSubject( "Order Confirmation on Ecommerce" );
+        helper.setText( mailSubject, false );
+        javaMailSender.send(message);
     }
 }
 

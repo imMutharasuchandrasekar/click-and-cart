@@ -9,6 +9,7 @@ import com.project.sb_ecommerce.model.Enums.PaymentMethod;
 //import com.ecommerce.project.service.StripeService;
 import com.project.sb_ecommerce.service.OrderService;
 import com.project.sb_ecommerce.Utilities.AuthUtil;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class OrderController
 //    private StripeService stripeService;
 
     @PostMapping("/user/order/payment")
-    public ResponseEntity<OrderDTO> orderProducts( @RequestBody OrderRequestDTO orderRequestDTO )
+    public ResponseEntity<OrderDTO> orderProducts( @RequestBody OrderRequestDTO orderRequestDTO ) throws MessagingException
     {
         String userEmail = authUtil.loggedInEmail();
         System.out.println("orderRequestDTO DATA: " + orderRequestDTO);

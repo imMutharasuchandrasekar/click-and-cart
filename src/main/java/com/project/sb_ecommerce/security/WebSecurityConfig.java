@@ -5,10 +5,15 @@ import com.project.sb_ecommerce.model.Role;
 import com.project.sb_ecommerce.model.User;
 import com.project.sb_ecommerce.repository.RoleRepository;
 import com.project.sb_ecommerce.repository.UserRepository;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 //import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -28,6 +33,7 @@ import com.project.sb_ecommerce.security.JWT.AuthEntryPointJwt;
 import com.project.sb_ecommerce.security.JWT.AuthTokenFilter;
 import com.project.sb_ecommerce.security.Services.UserDetailsServiceImpl;
 
+import java.io.InputStream;
 import java.util.Set;
 
 
@@ -47,7 +53,6 @@ public class WebSecurityConfig {
         return new AuthTokenFilter();
     }
 
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider()
     {
@@ -58,7 +63,6 @@ public class WebSecurityConfig {
 
         return authProvider;
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager( AuthenticationConfiguration authConfig ) throws Exception
