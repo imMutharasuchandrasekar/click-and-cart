@@ -1,26 +1,13 @@
 package com.project.sb_ecommerce.security;
 
-import com.project.sb_ecommerce.model.Enums.AppRole;
-import com.project.sb_ecommerce.model.Role;
-import com.project.sb_ecommerce.model.User;
-import com.project.sb_ecommerce.repository.RoleRepository;
-import com.project.sb_ecommerce.repository.UserRepository;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-//import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,9 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.project.sb_ecommerce.security.JWT.AuthEntryPointJwt;
 import com.project.sb_ecommerce.security.JWT.AuthTokenFilter;
 import com.project.sb_ecommerce.security.Services.UserDetailsServiceImpl;
-
-import java.io.InputStream;
-import java.util.Set;
 
 
 @Configuration
@@ -79,9 +63,9 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
     {
-        http.csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint( unauthorizedHandler ) )
-                .sessionManagement( session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) )
+        http.csrf( csrf -> csrf.disable() )
+                .exceptionHandling( exception -> exception.authenticationEntryPoint( unauthorizedHandler ) )
+                .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
