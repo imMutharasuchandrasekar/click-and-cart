@@ -7,6 +7,7 @@ and checkout seamlessly and place Orders.
 
 - User authentication & role based-authorization using JWT tokens and cookies.
 - Performant & Scalable endpoints using pagination, optimizing queries, and using lightweight DTOs for huge Datasets.
+- Email functionality for Order Confirmation.
 - Shopping cart operations (add, remove, update).
 - Loosly coupled modules using interfaces, IOC and DI.
 - Centralized Error handling and Clean coding practices. 
